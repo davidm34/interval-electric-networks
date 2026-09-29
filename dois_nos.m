@@ -1,24 +1,46 @@
 clear; clc; close all;
 
-% Varíaves do Resistor (Valor, nó inicial e nó final)
-% Inicialmente esse circuito
-% Nó 1 ───── R1 ───── Nó 2
-%│                    │
-% R2                   R3
-% │                    │
-% GND                  GND
-R1 = [200, 1, 2];
-R2 = [100, 1, 0];
-R3 = [200, 2, 0];
+% Abre o arquivo .cir (netlist no formato SPICE)
+filename = 'circuito.cir'; % Você pode alterar para o caminho do seu arquivo .cir
+fid = fopen(filename, 'r');
 
-% Número de nós (excluindo o nó 0/GND)
-num_nos = 2;
+if fid == -1
+    error('Não foi possível abrir o arquivo %s', filename);
+end
+
+Resistores = [];
+num_nos = 0;
+
+% Lê linha por linha
+while ~feof(fid)
+    linha = fgetl(fid);
+    linha = strtrim(linha); % Remove espaços em branco
+    
+    % Ignora comentários (linhas começando com * ou vazias)
+    if isempty(linha) || linha(1) == '*'
+        continue;
+    end
+    
+    % Lê os componentes
+    % Formato esperado: R<nome> <nó_a> <nó_b> <valor>
+    tokens = strsplit(linha);
+    
+    if length(tokens) >= 4 && upper(tokens{1}(1)) == 'R'
+        no_a = str2double(tokens{2});
+        no_b = str2double(tokens{3});
+        valor_R = str2double(tokens{4});
+        
+        % Adiciona na matriz de resistores [Valor, nó_a, nó_b]
+        Resistores = [Resistores; valor_R, no_a, no_b];
+        
+        % Atualiza o número de nós encontrados
+        num_nos = max([num_nos, no_a, no_b]);
+    end
+end
+fclose(fid);
 
 % Inicializando a matriz de condutâncias (G) com zeros
 G = zeros(num_nos, num_nos);
-
-% Agrupando os resistores em uma matriz para facilitar a iteração
-Resistores = [R1; R2; R3];
 
 % Iterando sobre cada resistor para montar a matriz G
 for i = 1:size(Resistores, 1)

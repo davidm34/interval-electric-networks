@@ -1,0 +1,4 @@
+* Circuito de dois nos
+R1 1 2 200
+R2 1 0 100
+R3 2 0 200
