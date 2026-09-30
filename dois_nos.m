@@ -65,7 +65,12 @@ for i = 1:size(Resistores, 1)
     end
 end
 
-% Exibindo a matriz final
+% Exibindo informações e a matriz final
+fprintf('--- Resumo do Circuito ---\n');
+fprintf('Número de nós independentes identificados: %d\n', num_nos);
+fprintf('Total de resistores processados: %d\n', size(Resistores, 1));
+fprintf('Dimensão da Matriz de Condutâncias: %dx%d\n\n', size(G, 1), size(G, 2));
+
 disp('Matriz de Condutâncias (G):');
 disp(G);
 
