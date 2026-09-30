@@ -24,3 +24,20 @@ disp(G);
 disp('Vetor de Correntes Nodais (I):');
 disp(I);
 
+% Exibe o sistema G * V = I simbolicamente
+fprintf('--- Sistema Nodal (G * V = I) ---\n');
+for k = 1:num_nos
+    fprintf('Nó %d: ', k);
+    for j = 1:num_nos
+        if j == 1
+            fprintf('%.4f*V%d ', G(k,j), j);
+        else
+            if G(k,j) >= 0
+                fprintf('+ %.4f*V%d ', G(k,j), j);
+            else
+                fprintf('- %.4f*V%d ', abs(G(k,j)), j);
+            end
+        end
+    end
+    fprintf('= %.4f\n', I(k));
+end
