@@ -3,19 +3,13 @@ function [L, U, y, x] = decomposicao_lu(A, b)
     % Imprime o passo a passo da construcao das matrizes L e U,
     % bem como as etapas de substituicao.
 
-    % Definimos a matriz de coeficientes 'A' do sistema linear (3x3)
-    A_orig = [ 2, -6, -1;
-              -3, -1,  7;
-              -8,  1, -2];
-
-    % Definimos o vetor de termos independentes 'b' (resultados)
-    b_orig = [-38;
-              -34;
-              -20];
-
-    % Criamos cópias de segurança para preservar os dados de entrada originais
-    A = A_orig;
-    b = b_orig;
+    % Se nenhum argumento for fornecido, utiliza um exemplo padrão (fallback para testes)
+    if nargin < 2
+        A = [ 2, -6, -1;
+             -3, -1,  7;
+             -8,  1, -2];
+        b = [-38; -34;-20];
+    end
 
     % 1. Verificações iniciais
     [n, m] = size(A);
