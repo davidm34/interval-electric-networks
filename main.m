@@ -44,7 +44,7 @@ end
 
 % 4. Resolução da equação nodal (G * V = I) via Decomposição LU
 fprintf('\n--- Resolução do Sistema Nodal por Decomposição LU ---\n');
-[L, U, y, V] = decomposicao_lu(G, I);
+[L, U, V] = decomposicao_lu(G, I);
 
 % 5. Exibição das Tensões Nodais
 fprintf('\n======================================\n');
