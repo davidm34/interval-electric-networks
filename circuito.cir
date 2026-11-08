@@ -1,11 +1,13 @@
-* Circuito com resistores e fontes de corrente
-* Formato Resistor: R<nome> <no_a> <no_b> <valor_ohms>
+* Circuito com resistores, fontes de corrente e fontes de tensão
+* Formato Resistor: R<nome> <no_+> <no_-> <valor_ohms>
 * Formato Corrente: I<nome> <no_+> <no_-> <valor_A>
+* Formato Tensão: V<nome> <no_+> <no_-> <valor_V>
 * <no_+> nó que sai 
 * <no_-> nó que entra 
 
-R1  1 0 2
-R2  1 2 6
-R3  2 0 7
-I1 0 1 3
-I2 2 0 12
+R1 1 0 2
+R2 1 2 10
+R3 2 0 4
+I1 0 1 2
+I2 2 0 7
+V1 2 1 2

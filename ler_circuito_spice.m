@@ -1,5 +1,16 @@
-function [Resistores, Fontes_I, num_nos] = ler_circuito_spice(filename)
-    % Função para ler o arquivo .cir e extrair resistores, fontes de corrente e quantidade de nós
+function [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename)
+    % LER_CIRCUITO_SPICE Lê o arquivo .cir e extrai resistores, fontes de corrente,
+    % fontes de tensão e a quantidade de nós independentes.
+    %
+    % Formatos aceitos:
+    %   R<nome> <no_+> <no_-> <valor_ohms>
+    %   I<nome> <no_+> <no_-> <valor_A>
+    %   V<nome> <no_+> <no_-> <valor_V>
+    %
+    % Formas de chamada:
+    %   [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename)
+    %   [Resistores, Fontes_I, num_nos] = ler_circuito_spice(filename) (retrocompatível)
+
     fid = fopen(filename, 'r');
     
     if fid == -1
@@ -8,11 +19,15 @@ function [Resistores, Fontes_I, num_nos] = ler_circuito_spice(filename)
     
     Resistores = [];
     Fontes_I = [];
+    Fontes_V = [];
     num_nos = 0;
     
     % Lê linha por linha
     while ~feof(fid)
         linha = fgetl(fid);
+        if ~ischar(linha)
+            break;
+        end
         linha = strtrim(linha); % Remove espaços em branco
         
         % Ignora comentários (linhas começando com * ou vazias)
@@ -35,6 +50,9 @@ function [Resistores, Fontes_I, num_nos] = ler_circuito_spice(filename)
             elseif tipo == 'I'
                 % Adiciona na matriz de fontes de corrente [Valor, nó_a, nó_b]
                 Fontes_I = [Fontes_I; valor, no_a, no_b];
+            elseif tipo == 'V'
+                % Adiciona na matriz de fontes de tensão [Valor, nó_+, nó_-]
+                Fontes_V = [Fontes_V; valor, no_a, no_b];
             end
             
             % Atualiza o número de nós encontrados
@@ -42,4 +60,9 @@ function [Resistores, Fontes_I, num_nos] = ler_circuito_spice(filename)
         end
     end
     fclose(fid);
+
+    % Suporte retrocompatível caso a função seja chamada com apenas 3 saídas
+    if nargout == 3
+        Fontes_V = num_nos;
+    end
 end
