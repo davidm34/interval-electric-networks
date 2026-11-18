@@ -4,7 +4,7 @@ clear; clc; close all;
 filename = 'circuito.cir';
 
 % 1. Leitura do arquivo SPICE
-[Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename);
+[Resistores, Fontes_I, Fontes_V, Capacitores, Indutores, num_nos] = ler_circuito_spice(filename);
 
 % 2. Modelagem das matrizes do circuito (Análise Nodal Modificada)
 G = montar_matriz_G(Resistores, num_nos);

@@ -1,15 +1,17 @@
-function [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename)
+function [Resistores, Fontes_I, Fontes_V, Capacitores, Indutores, num_nos] = ler_circuito_spice(filename)
     % LER_CIRCUITO_SPICE Lê o arquivo .cir e extrai resistores, fontes de corrente,
-    % fontes de tensão e a quantidade de nós independentes.
+    % fontes de tensão, capacitores, indutores e a quantidade de nós independentes.
     %
     % Formatos aceitos:
     %   R<nome> <no_+> <no_-> <valor_ohms>
     %   I<nome> <no_+> <no_-> <valor_A>
     %   V<nome> <no_+> <no_-> <valor_V>
+    %   C<nome> <no_+> <no_-> <valor_F>
+    %   L<nome> <no_+> <no_-> <valor_H>
     %
     % Formas de chamada:
-    %   [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename)
-    %   [Resistores, Fontes_I, num_nos] = ler_circuito_spice(filename) (retrocompatível)
+    %   [Resistores, Fontes_I, Fontes_V, Capacitores, Indutores, num_nos] = ler_circuito_spice(filename)
+    %   [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename) (retrocompatível)
 
     fid = fopen(filename, 'r');
     
@@ -20,6 +22,8 @@ function [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename
     Resistores = [];
     Fontes_I = [];
     Fontes_V = [];
+    Capacitores = [];
+    Indutores = [];
     num_nos = 0;
     
     % Lê linha por linha
@@ -53,6 +57,12 @@ function [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename
             elseif tipo == 'V'
                 % Adiciona na matriz de fontes de tensão [Valor, nó_+, nó_-]
                 Fontes_V = [Fontes_V; valor, no_a, no_b];
+            elseif tipo == 'C'
+                % Adiciona na matriz de capacitores [Valor, nó_a, nó_b]
+                Capacitores = [Capacitores; valor, no_a, no_b];
+            elseif tipo == 'L'
+                % Adiciona na matriz de indutores [Valor, nó_a, nó_b]
+                Indutores = [Indutores; valor, no_a, no_b];
             end
             
             % Atualiza o número de nós encontrados
@@ -61,8 +71,10 @@ function [Resistores, Fontes_I, Fontes_V, num_nos] = ler_circuito_spice(filename
     end
     fclose(fid);
 
-    % Suporte retrocompatível caso a função seja chamada com apenas 3 saídas
+    % Suporte retrocompatível caso a função seja chamada com menos saídas
     if nargout == 3
         Fontes_V = num_nos;
+    elseif nargout == 4
+        Capacitores = num_nos;
     end
 end

@@ -1,7 +1,9 @@
 * Circuito com resistores, fontes de corrente e fontes de tensão
-* Formato Resistor: R<nome> <no_+> <no_-> <valor_ohms>
-* Formato Corrente: I<nome> <no_+> <no_-> <valor_A>
-* Formato Tensão: V<nome> <no_+> <no_-> <valor_V>
+* Formato Resistor:  R<nome> <no_+> <no_-> <valor_ohms>
+* Formato Corrente:  I<nome> <no_+> <no_-> <valor_A>
+* Formato Tensão:    V<nome> <no_+> <no_-> <valor_V>
+* Formato Capacitor: C<nome> <no_+> <no_-> <valor_F>
+* Formato Indutor:   L<nome> <no_+> <no_-> <valor_H>
 * <no_+> nó que sai 
 * <no_-> nó que entra 
 
