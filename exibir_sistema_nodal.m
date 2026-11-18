@@ -1,4 +1,4 @@
-function exibir_sistema_nodal(G, I, A, b, Resistores, Fontes_I, Fontes_V, num_nos)
+function exibir_sistema_nodal(G, I, A, b, Resistores, Fontes_I, Fontes_V, num_nos, Capacitores, Indutores)
     % EXIBIR_SISTEMA_NODAL Exibe o resumo do circuito, as matrizes nodais
     % e a representação simbólica do sistema de equações lineares.
 
@@ -10,11 +10,25 @@ function exibir_sistema_nodal(G, I, A, b, Resistores, Fontes_I, Fontes_V, num_no
 
     num_resistores = size(Resistores, 1);
     num_fontes_i   = size(Fontes_I, 1);
+    num_capacitores = 0;
+    if nargin >= 9 && ~isempty(Capacitores)
+        num_capacitores = size(Capacitores, 1);
+    end
+    num_indutores = 0;
+    if nargin >= 10 && ~isempty(Indutores)
+        num_indutores = size(Indutores, 1);
+    end
 
     % Resumo do Circuito
     fprintf('--- Resumo do Circuito ---\n');
     fprintf('Número de nós independentes identificados: %d\n', num_nos);
     fprintf('Total de resistores processados: %d\n', num_resistores);
+    if num_capacitores > 0
+        fprintf('Total de capacitores processados: %d\n', num_capacitores);
+    end
+    if num_indutores > 0
+        fprintf('Total de indutores processados: %d\n', num_indutores);
+    end
     fprintf('Total de fontes de corrente processadas: %d\n', num_fontes_i);
     fprintf('Total de fontes de tensão processadas: %d\n', num_fontes_v);
     fprintf('Dimensão da Matriz de Condutâncias (G): %dx%d\n', size(G, 1), size(G, 2));
@@ -95,4 +109,3 @@ function exibir_sistema_nodal(G, I, A, b, Resistores, Fontes_I, Fontes_V, num_no
         end
     end
 end
-

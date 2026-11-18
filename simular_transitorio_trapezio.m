@@ -29,8 +29,8 @@ function [tempo, V_hist, i_C_hist, i_L_hist, X_final] = simular_transitorio_trap
     I_dummy = zeros(num_nos, 1);
     [A, ~] = montar_sistema_anm(G, I_dummy, Fontes_V, num_nos);
 
-    % Fatoração LU estática (feita uma única vez antes do loop)
-    [L, U] = lu(A);
+    % Fatoração LU estática com permutação (feita uma única vez antes do loop)
+    [L_mat, U_mat, P_mat] = lu(A);
 
     % 2. Inicialização dos estados e matrizes de histórico
     num_cap = size(Capacitores, 1);
@@ -54,27 +54,27 @@ function [tempo, V_hist, i_C_hist, i_L_hist, X_final] = simular_transitorio_trap
 
         % a) Correntes de histórico dos Capacitores
         for c = 1:num_cap
-            C    = Capacitores(c, 1);
-            no_a = Capacitores(c, 2);
-            no_b = Capacitores(c, 3);
+            val_C = Capacitores(c, 1);
+            no_a  = Capacitores(c, 2);
+            no_b  = Capacitores(c, 3);
 
             v_a_ant = 0; if no_a ~= 0, v_a_ant = V_ant(no_a); end
             v_b_ant = 0; if no_b ~= 0, v_b_ant = V_ant(no_b); end
 
-            [~, I_C_hist] = modelo_capacitor_trapezio(C, dt, v_a_ant, v_b_ant, i_C_ant(c));
+            [~, I_C_hist] = modelo_capacitor_trapezio(val_C, dt, v_a_ant, v_b_ant, i_C_ant(c));
             Fontes_Hist = [Fontes_Hist; I_C_hist, no_a, no_b];
         end
 
         % b) Correntes de histórico dos Indutores
         for l = 1:num_ind
-            L    = Indutores(l, 1);
-            no_a = Indutores(l, 2);
-            no_b = Indutores(l, 3);
+            val_L = Indutores(l, 1);
+            no_a  = Indutores(l, 2);
+            no_b  = Indutores(l, 3);
 
             v_a_ant = 0; if no_a ~= 0, v_a_ant = V_ant(no_a); end
             v_b_ant = 0; if no_b ~= 0, v_b_ant = V_ant(no_b); end
 
-            [~, I_L_hist] = modelo_indutor_trapezio(L, dt, v_a_ant, v_b_ant, i_L_ant(l));
+            [~, I_L_hist] = modelo_indutor_trapezio(val_L, dt, v_a_ant, v_b_ant, i_L_ant(l));
             Fontes_Hist = [Fontes_Hist; I_L_hist, no_a, no_b];
         end
 
@@ -82,41 +82,41 @@ function [tempo, V_hist, i_C_hist, i_L_hist, X_final] = simular_transitorio_trap
         I_t = montar_vetor_I(Fontes_I, num_nos, Fontes_Hist);
         [~, b_t] = montar_sistema_anm(G, I_t, Fontes_V, num_nos);
 
-        % d) Resolução direta rápida via substituição (L e U pré-fatoradas)
-        y = L \ b_t;
-        X = U \ y;
+        % d) Resolução direta rápida via substituição (L_mat e U_mat pré-fatoradas)
+        y = L_mat \ (P_mat * b_t);
+        X = U_mat \ y;
 
         V_atual = X(1:num_nos);
         V_hist(:, step) = V_atual;
 
         % e) Atualização das correntes instantâneas nos capacitores
         for c = 1:num_cap
-            C    = Capacitores(c, 1);
-            no_a = Capacitores(c, 2);
-            no_b = Capacitores(c, 3);
+            val_C = Capacitores(c, 1);
+            no_a  = Capacitores(c, 2);
+            no_b  = Capacitores(c, 3);
 
             v_a_ant = 0; if no_a ~= 0, v_a_ant = V_ant(no_a); end
             v_b_ant = 0; if no_b ~= 0, v_b_ant = V_ant(no_b); end
             v_a_t   = 0; if no_a ~= 0, v_a_t   = V_atual(no_a); end
             v_b_t   = 0; if no_b ~= 0, v_b_t   = V_atual(no_b); end
 
-            [~, ~, i_C_t] = modelo_capacitor_trapezio(C, dt, v_a_ant, v_b_ant, i_C_ant(c), v_a_t, v_b_t);
+            [~, ~, i_C_t] = modelo_capacitor_trapezio(val_C, dt, v_a_ant, v_b_ant, i_C_ant(c), v_a_t, v_b_t);
             i_C_ant(c) = i_C_t;
             i_C_hist(c, step) = i_C_t;
         end
 
         % f) Atualização das correntes instantâneas nos indutores
         for l = 1:num_ind
-            L    = Indutores(l, 1);
-            no_a = Indutores(l, 2);
-            no_b = Indutores(l, 3);
+            val_L = Indutores(l, 1);
+            no_a  = Indutores(l, 2);
+            no_b  = Indutores(l, 3);
 
             v_a_ant = 0; if no_a ~= 0, v_a_ant = V_ant(no_a); end
             v_b_ant = 0; if no_b ~= 0, v_b_ant = V_ant(no_b); end
             v_a_t   = 0; if no_a ~= 0, v_a_t   = V_atual(no_a); end
             v_b_t   = 0; if no_b ~= 0, v_b_t   = V_atual(no_b); end
 
-            [~, ~, i_L_t] = modelo_indutor_trapezio(L, dt, v_a_ant, v_b_ant, i_L_ant(l), v_a_t, v_b_t);
+            [~, ~, i_L_t] = modelo_indutor_trapezio(val_L, dt, v_a_ant, v_b_ant, i_L_ant(l), v_a_t, v_b_t);
             i_L_ant(l) = i_L_t;
             i_L_hist(l, step) = i_L_t;
         end

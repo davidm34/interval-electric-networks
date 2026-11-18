@@ -2,8 +2,8 @@ clear; clc; close all;
 
 % Configurações
 filename = 'circuito.cir';
-dt = 1e-4;       % Passo de integração temporal (s)
-t_fim = 0.05;    % Tempo total de simulação (s)
+dt = 1e-3;       % Passo de integração temporal (s)
+t_fim = 8.0;     % Tempo total de simulação (s) (adequado para L=1H, C=0.5F)
 
 % 1. Leitura do arquivo SPICE
 [Resistores, Fontes_I, Fontes_V, Capacitores, Indutores, num_nos] = ler_circuito_spice(filename);
@@ -40,7 +40,7 @@ else
     [A, b_inicial] = montar_sistema_anm(G, I_inicial, Fontes_V, num_nos);
 
     % Exibição inicial do circuito
-    exibir_sistema_nodal(G, I_inicial, A, b_inicial, Resistores, Fontes_I, Fontes_V, num_nos);
+    exibir_sistema_nodal(G, I_inicial, A, b_inicial, Resistores, Fontes_I, Fontes_V, num_nos, Capacitores, Indutores);
 
     % Execução da simulação temporal (Método de Dommel / Trapezoidal)
     [tempo, V_hist, i_C_hist, i_L_hist, X_final] = simular_transitorio_trapezio( ...

@@ -23,7 +23,7 @@ function plotar_resultados_transitorio(tempo, V_hist, i_C_hist, i_L_hist, num_no
         xlabel('Tempo (s)');
         ylabel('Tensão (V)');
         title('Tensões Nodais ao Longo do Tempo');
-        legend('Location', 'best');
+        legend('Location', 'northeast');
 
         % Subplot 2: Correntes nos Capacitores e Indutores
         subplot(2, 1, 2);
@@ -37,7 +37,7 @@ function plotar_resultados_transitorio(tempo, V_hist, i_C_hist, i_L_hist, num_no
         xlabel('Tempo (s)');
         ylabel('Corrente (A)');
         title('Correntes nos Elementos Reativos');
-        legend('Location', 'best');
+        legend('Location', 'northeast');
     catch
         % Ignora erro gráfico se executado sem display
     end
