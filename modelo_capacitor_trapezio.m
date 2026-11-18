@@ -14,6 +14,13 @@ function [G_C, I_C_hist, i_C_t] = modelo_capacitor_trapezio(C, dt, v_k_ant, v_m_
     % Condutância equivalente (entra na matriz G)
     G_C = (2 * C) / dt;
 
+    % Caso chamada apenas para obter a condutância equivalente G_C
+    if nargin < 5
+        v_k_ant = 0;
+        v_m_ant = 0;
+        i_ant = 0;
+    end
+
     % Equação (7) - Fonte de corrente de histórico (entra no vetor I)
     v_km_ant = v_k_ant - v_m_ant;
     I_C_hist = -i_ant - G_C * v_km_ant;

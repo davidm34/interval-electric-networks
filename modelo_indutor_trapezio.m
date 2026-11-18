@@ -14,6 +14,13 @@ function [G_L, I_L_hist, i_L_t] = modelo_indutor_trapezio(L, dt, v_k_ant, v_m_an
     % Condutância equivalente (entra na matriz G)
     G_L = dt / (2 * L);
 
+    % Caso chamada apenas para obter a condutância equivalente G_L
+    if nargin < 5
+        v_k_ant = 0;
+        v_m_ant = 0;
+        i_ant = 0;
+    end
+
     % Equação (5) - Fonte de corrente de histórico (entra no vetor I)
     v_km_ant = v_k_ant - v_m_ant;
     I_L_hist = i_ant + G_L * v_km_ant;

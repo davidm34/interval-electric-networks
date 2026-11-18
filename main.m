@@ -2,12 +2,13 @@ clear; clc; close all;
 
 % Configurações
 filename = 'circuito.cir';
+dt = 1e-4; % Passo de tempo da discretização trapezoidal (s)
 
 % 1. Leitura do arquivo SPICE
 [Resistores, Fontes_I, Fontes_V, Capacitores, Indutores, num_nos] = ler_circuito_spice(filename);
 
 % 2. Modelagem das matrizes do circuito (Análise Nodal Modificada)
-G = montar_matriz_G(Resistores, num_nos);
+G = montar_matriz_G(Resistores, num_nos, Capacitores, Indutores, dt);
 I = montar_vetor_I(Fontes_I, num_nos);
 [A, b] = montar_sistema_anm(G, I, Fontes_V, num_nos);
 
